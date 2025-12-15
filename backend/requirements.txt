@@ -1,5 +1,4 @@
 fastapi
-mangum
 sqlalchemy
 python-jose[cryptography]
 passlib

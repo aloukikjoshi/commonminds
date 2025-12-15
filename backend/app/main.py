@@ -45,10 +45,5 @@ app.include_router(upload.router, prefix=f"{settings.API_V1_STR}/upload", tags=[
 def read_root():
     return {"message": "Welcome to commonminds API"}
 
-# Vercel serverless handler
-try:
-    from mangum import Mangum
-    handler = Mangum(app, lifespan="off")
-except ImportError:
-    # Mangum not available in local development
-    pass
+# Vercel will automatically detect and handle the FastAPI app
+# No need for Mangum when using @vercel/python with FastAPI preset
