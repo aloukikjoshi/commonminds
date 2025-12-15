@@ -15,9 +15,15 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    
+    # Cloudinary Configuration
+    CLOUDINARY_CLOUD_NAME: str
+    CLOUDINARY_API_KEY: str
+    CLOUDINARY_API_SECRET: str
 
     class Config:
-        env_file = str(ENV_FILE)
+        # Only use .env file if it exists (local development)
+        env_file = str(ENV_FILE) if ENV_FILE.exists() else None
         case_sensitive = False
 
 

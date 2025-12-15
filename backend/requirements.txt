@@ -1,7 +1,6 @@
 fastapi
-uvicorn
+mangum
 sqlalchemy
-alembic
 python-jose[cryptography]
 passlib
 argon2-cffi
@@ -10,3 +9,4 @@ python-dotenv
 psycopg2-binary
 pydantic[email]
 pydantic-settings
+cloudinary

@@ -7,19 +7,74 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import RichTextEditor from '@/components/editor/RichTextEditor';
 import { useToast } from '@/hooks/use-toast';
-import { createPost } from '@/services/api';
-import { Loader } from 'lucide-react';
+import { createPost, uploadImage } from '@/services/api';
+import { Loader, Upload, X } from 'lucide-react';
 
 const CreatePost = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [excerpt, setExcerpt] = useState('');
   const [coverImage, setCoverImage] = useState('');
+  const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
   const [tags, setTags] = useState<string>('');
   const [loading, setLoading] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
   
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  const handleCoverImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Invalid file type",
+        description: "Please select an image file",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Validate file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "File too large",
+        description: "Image must be less than 5MB",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setCoverImageFile(file);
+    
+    // Upload immediately
+    try {
+      setUploadingImage(true);
+      const result = await uploadImage(file);
+      setCoverImage(result.url);
+      toast({
+        title: "Image uploaded",
+        description: "Cover image uploaded successfully"
+      });
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      toast({
+        title: "Upload failed",
+        description: "Could not upload image. Please try again.",
+        variant: "destructive"
+      });
+      setCoverImageFile(null);
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const removeCoverImage = () => {
+    setCoverImage('');
+    setCoverImageFile(null);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,14 +154,53 @@ const CreatePost = () => {
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="coverImage" className="text-sm font-medium">Cover Image URL (Optional)</Label>
-            <Input
-              id="coverImage"
-              value={coverImage}
-              onChange={(e) => setCoverImage(e.target.value)}
-              placeholder="Enter image URL"
-              className="w-full h-10"
-            />
+            <Label htmlFor="coverImage" className="text-sm font-medium">Cover Image (Optional)</Label>
+            {coverImage ? (
+              <div className="relative">
+                <img 
+                  src={coverImage} 
+                  alt="Cover preview" 
+                  className="w-full h-48 object-cover rounded-md"
+                />
+                <Button
+                  type="button"
+                  variant="destructive"
+                  size="sm"
+                  className="absolute top-2 right-2"
+                  onClick={removeCoverImage}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            ) : (
+              <div className="border-2 border-dashed border-gray-300 rounded-md p-6 text-center hover:border-gray-400 transition-colors">
+                <input
+                  type="file"
+                  id="coverImage"
+                  accept="image/*"
+                  onChange={handleCoverImageChange}
+                  className="hidden"
+                  disabled={uploadingImage}
+                />
+                <label 
+                  htmlFor="coverImage" 
+                  className="cursor-pointer flex flex-col items-center"
+                >
+                  {uploadingImage ? (
+                    <>
+                      <Loader className="h-8 w-8 text-gray-400 animate-spin mb-2" />
+                      <span className="text-sm text-gray-600">Uploading...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="h-8 w-8 text-gray-400 mb-2" />
+                      <span className="text-sm text-gray-600">Click to upload cover image</span>
+                      <span className="text-xs text-gray-500 mt-1">PNG, JPG, GIF up to 5MB</span>
+                    </>
+                  )}
+                </label>
+              </div>
+            )}
           </div>
           
           <div className="space-y-2">
