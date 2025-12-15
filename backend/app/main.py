@@ -20,6 +20,7 @@ app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 origins = [
     "https://commonminds.vercel.app",
     "http://localhost:5173",
+    "http://localhost:8080",
     "http://localhost:8000",
 ]
 

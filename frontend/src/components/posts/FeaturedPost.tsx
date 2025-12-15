@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { formatDistanceToNow } from 'date-fns';
+import { stripHtmlTags } from '@/utils/text';
 
 // Define a type for tag objects
 type TagObject = {
@@ -71,7 +72,7 @@ const FeaturedPost = ({ post }) => {
             </h2>
             
             {excerpt && (
-              <p className="text-gray-600 mb-4">{excerpt}</p>
+              <p className="text-gray-600 mb-4">{stripHtmlTags(excerpt)}</p>
             )}
           </div>
           

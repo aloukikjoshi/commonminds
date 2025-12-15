@@ -17,10 +17,11 @@
 *.swp
 *.swo
 
-# Environment Files (adjust as needed—exceptions like .env.example can be whitelisted)
+# Environment Files
 **/.env
 **/.env.local
 **/.env.*
+!**/.env.example
 
 # Database Files
 *.db
@@ -48,6 +49,10 @@ frontend/build/
 frontend/npm-debug.log*
 frontend/yarn-debug.log*
 frontend/yarn-error.log*
+frontend/bun.lockb
+
+# Backend uploads (user-uploaded files)
+backend/uploads/
 frontend/.DS_Store
 
 # Backend-specific files

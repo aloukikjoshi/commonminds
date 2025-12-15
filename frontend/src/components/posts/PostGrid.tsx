@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Link } from 'react-router-dom';
 import { PostActions } from '@/components/posts/PostActions';
 import { useAuth } from '@/contexts/AuthContext';
+import { stripHtmlTags, truncateText } from '@/utils/text';
 
 interface PostGridProps {
   initialPosts?: Post[];
@@ -154,7 +155,7 @@ const PostGrid = ({
             </div>
             
             <p className="text-sm text-gray-600 mb-4">
-              {post.excerpt || post.content.substring(0, 100)}...
+              {truncateText(stripHtmlTags(post.excerpt || post.content), 150)}
             </p>
             
             <div className="flex items-center justify-between text-sm text-gray-500 mt-4">
