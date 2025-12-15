@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import os
 
-from fastapi.staticfiles import StaticFiles
 from app.api.endpoints import auth, users, posts, upload
 from app.core.config import settings
 
@@ -13,8 +13,10 @@ app = FastAPI(
     debug=True  # Enable debug mode to see 500 errors in response
 )
 
-# Mount static files
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+# Mount static files only in local environment
+if not os.getenv("VERCEL"):
+    from fastapi.staticfiles import StaticFiles
+    app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 # CORS configuration
 origins = [
@@ -42,3 +44,11 @@ app.include_router(upload.router, prefix=f"{settings.API_V1_STR}/upload", tags=[
 @app.get("/")
 def read_root():
     return {"message": "Welcome to commonminds API"}
+
+# Vercel serverless handler
+try:
+    from mangum import Mangum
+    handler = Mangum(app, lifespan="off")
+except ImportError:
+    # Mangum not available in local development
+    pass
