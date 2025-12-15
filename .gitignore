@@ -51,6 +51,7 @@ frontend/yarn-error.log*
 frontend/.DS_Store
 
 # Backend-specific files
+backend/uploads/
 backend/static/uploads/
 backend/migrations/versions/
 backend/migrations/__pycache__/

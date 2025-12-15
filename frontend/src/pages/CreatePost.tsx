@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import RichTextEditor from '@/components/editor/RichTextEditor';
 import { useToast } from '@/hooks/use-toast';
 import { createPost } from '@/services/api';
 import { Loader } from 'lucide-react';
@@ -47,6 +48,9 @@ const CreatePost = () => {
         cover_image: coverImage || undefined,
         tags: tagsArray.length > 0 ? tagsArray : undefined
       };
+
+      await createPost(postData);
+
       toast({
         title: "Post created successfully",
         description: "Your post has been published"
@@ -118,13 +122,10 @@ const CreatePost = () => {
           
           <div className="space-y-2">
             <Label className="text-sm font-medium">Content</Label>
-            <Textarea
-              className="w-full min-h-[250px] bg-white editor-textarea border border-input px-3 py-2 placeholder:text-gray-500"
-              id="content"
+            <RichTextEditor
               value={content}
-              onChange={(e) => setContent(e.target.value)}
+              onChange={setContent}
               placeholder="Write your post content here..."
-              required
             />
           </div>
 

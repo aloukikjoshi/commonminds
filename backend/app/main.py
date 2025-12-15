@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.endpoints import auth, users, posts
+from fastapi.staticfiles import StaticFiles
+from app.api.endpoints import auth, users, posts, upload
 from app.core.config import settings
 
 app = FastAPI(
@@ -11,6 +12,9 @@ app = FastAPI(
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
     debug=True  # Enable debug mode to see 500 errors in response
 )
+
+# Mount static files
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 # CORS configuration
 origins = [
@@ -32,6 +36,7 @@ app.add_middleware(
 app.include_router(auth.router, prefix=f"{settings.API_V1_STR}/auth", tags=["authentication"])
 app.include_router(users.router, prefix=f"{settings.API_V1_STR}/users", tags=["users"])
 app.include_router(posts.router, prefix=f"{settings.API_V1_STR}/posts", tags=["posts"])
+app.include_router(upload.router, prefix=f"{settings.API_V1_STR}/upload", tags=["upload"])
 
 @app.get("/")
 def read_root():

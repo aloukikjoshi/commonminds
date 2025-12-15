@@ -132,11 +132,10 @@ const Post = () => {
         </header>
 
         {/* Post content */}
-        <div className="prose prose-lg max-w-none blog-content">
-          {post.content.split('\n').map((paragraph, index) =>
-            paragraph ? <p key={index}>{paragraph}</p> : <br key={index} />
-          )}
-        </div>
+        <div 
+          className="prose prose-lg max-w-none blog-content"
+          dangerouslySetInnerHTML={{ __html: post.content }}
+        />
 
         {/* Show edit timestamp */}
         {post.updated_at && new Date(post.updated_at).getTime() > new Date(post.published_at).getTime() + 60000 && (

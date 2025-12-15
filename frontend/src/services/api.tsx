@@ -146,6 +146,36 @@ export const updatePost = async (postId: string, postData: UpdatePostData) => {
   }
 };
 
+export const uploadImage = async (file: File) => {
+  const token = getToken();
+  
+  if (!token) {
+    throw new Error('You must be logged in to upload images');
+  }
+  
+  const formData = new FormData();
+  formData.append('file', file);
+  
+  try {
+    const response = await fetch(`${API_URL}/upload/image`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: formData
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.detail || 'Failed to upload image');
+    }
+    
+    return await response.json();
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
 // Fetch user profile
 export const fetchUserProfile = async (userId: string) => {
   try {
